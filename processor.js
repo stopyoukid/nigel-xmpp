@@ -1,5 +1,7 @@
 var io = require('socket.io-client'),
 	socket = io.connect('http://localhost:80/'),
+	http = require('http'),
+	nigelUrl = "http://localhost:3000/",
 	parser = function (message) {
 		var temp = message.toLowerCase(),
 			results;
@@ -30,6 +32,17 @@ var io = require('socket.io-client'),
 socket.emit("reg", {source: "server"});
 socket.on('recieve', function (data) {
 	var results = parser(data.message);
-	console.log("Results: ", results);
-	socket.emit('recieve', {to: data.userName, userName: 'NIGEL', message: results.toString()});
+	socket.emit('recieve', {to: data.userName, userName: 'NIGEL', message: "Executing..." });
+		// TODO: Use nigel sockets when available
+	http.get(nigelUrl + results.toString() + "?format=plain", function(res) {
+	  	res.on('data', function (chunk) {
+	  		var message = "Invalid instruction";
+	     	if (('' + res.statusCode).match(/^[23]\d\d$/)) {
+     			message = "\n" + chunk;
+	 		}
+			socket.emit('recieve', {to: data.userName, userName: 'NIGEL', message: message });
+		});
+	}).on('error', function(e) {
+		socket.emit('recieve', {to: data.userName, userName: 'NIGEL', message: "Invalid instruction"});
+	});
 });
