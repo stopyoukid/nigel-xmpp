@@ -10,7 +10,23 @@ var io = require('socket.io-client'),
 			if (temp[1]) {
 				results = temp[0].split(' ').slice(0, -1).join('/');
 			} else {
-				results = temp[0].split(' ').join('/');
+                results =
+                    temp[0]
+                        .replace("who ", "")
+                        .replace("what ", "")
+                        .replace("the ", "")
+                        .replace("a ", "")
+                        .replace("an ", "")
+                        .replace("is ", "")
+                        .replace("on ", "")
+                        .replace(/[^a-zA-Z0-9-\s]+/g, "") // Replace any non word character with nothing
+                        .split(' ');
+                if (temp[0].indexOf("who") === 0) {
+                    // Reverse the order of the arguments so
+                    // ie.  Who broke the build?
+                    results = results.reverse();
+                }
+                results = results.join('/');
 			}
 		}
 		if (temp[1]) {
