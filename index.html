@@ -1,0 +1,155 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="stylesheet.css">
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			var socket = io.connect('http://localhost:80/');
+				socket.emit("reg", {source: "web"});
+				socket.on('signin', function (data) {
+					window.document.body.className = '';
+					userName = data.userName;
+				});
+				socket.on('signout', function (data) {
+					window.document.body.className = 'noAuth';
+					userName = '';
+				});
+				socket.on('send', function (data) {
+					console.log(data);
+					messages.push(data);
+					userMessage.value = '';
+					chatWindow.appendChild(buildNewMessage(data));
+					chatWindow.scrollTop = chatWindow.scrollHeight;
+				});
+		</script>
+		<script>
+			var element = document.getElementsByClassName("user");
+			if (window.userName) {
+				element[0].innerHTML = window.userName;
+			}
+			
+			window.QueryString = function () {
+			  // This function is anonymous, is executed immediately and 
+			  // the return value is assigned to QueryString!
+			  var query_string = {};
+			  var query = window.location.search.substring(1);
+			  var vars = query.split("&");
+			  for (var i=0;i<vars.length;i++) {
+				var pair = vars[i].split("=");
+					// If first entry with this name
+				if (typeof query_string[pair[0]] === "undefined") {
+				  query_string[pair[0]] = pair[1];
+					// If second entry with this name
+				} else if (typeof query_string[pair[0]] === "string") {
+				  var arr = [ query_string[pair[0]], pair[1] ];
+				  query_string[pair[0]] = arr;
+					// If third or later entry with this name
+				} else {
+				  query_string[pair[0]].push(pair[1]);
+				}
+			  } 
+				return query_string;
+			};
+		</script>
+		
+		<script>
+			var loggedIn = false,
+				userName = '',
+				messages = [],
+				
+				container = document.createElement("div");
+				loginForm = document.createElement("div"),
+				authContainer = document.createElement("div"),
+				chatWindow = document.createElement("div"),
+				messageForm = document.createElement("div"),
+				sendButton = document.createElement("button"),
+				userMessage = document.createElement("input"),
+				
+				userTextBox = document.createElement("input"),
+				userPassword = document.createElement("input"),
+				loginButton = document.createElement("button"),
+				logoutButton = document.createElement("button"),
+
+				buildLoginForm = function (container) {
+					userTextBox.className = 'user';
+					userTextBox.type = 'text';
+					userTextBox.name = 'userName';
+					userPassword.className = 'password';
+					userPassword.type = 'password';
+					userPassword.name = 'password';
+					loginButton.innerHTML = 'login';
+					loginButton.onclick = function () {
+						socket.emit('signin', { userName: userTextBox.value, password: userPassword.value});
+					};
+					logoutButton.innerHTML = 'logout';
+					logoutButton.onclick = function () {
+						socket.emit('signout', {userName: userTextBox.value});
+						userTextBox.value = '';
+						userPassword.value = '';
+					};
+				
+					container.appendChild(document.createTextNode("User Name: "));
+					container.appendChild(userTextBox);
+					container.appendChild(document.createTextNode("Password: "));
+					container.appendChild(userPassword);
+					container.appendChild(loginButton);
+					container.appendChild(logoutButton);
+				},
+				
+				buildNewMessage = function (message) {
+					var entry = document.createElement('p'),
+							userNameBox = document.createElement('span'),
+							messageBox = document.createElement('span');
+						userNameBox.innerHTML = message.userName;
+						userNameBox.className = message.userName === userName ? 'userName' : 'guestName';
+						messageBox.innerHTML = message.message;
+						messageBox.className = "message";
+						entry.className = "chat";
+						entry.appendChild(userNameBox);
+						entry.appendChild(messageBox);
+					return entry;
+				},
+				
+				buildChatWindow = function (container) {
+					chatWindow.className = "chatWindow";
+					messages.forEach(function (message) {
+						chatWindow.appendChild(buildNewMessage(message));
+					});
+					container.appendChild(chatWindow);
+				},
+				
+				buildMessageForm = function (container) {
+					messageForm.className = 'messageForm';
+					userMessage.className = "userMessage";
+					userMessage.type = "text";
+					userMessage.name = "userMessage";
+					sendButton.className = "userSend";
+					sendButton.innerHTML = "send";
+					sendButton.onclick = function () {
+						socket.emit('send', { userName: userTextBox.value, to: 'Nigel', message: userMessage.value});
+					};
+					messageForm.appendChild(userMessage);
+					messageForm.appendChild(sendButton);
+					container.appendChild(messageForm);
+				},
+				
+				init = function () {
+					loginForm.className = 'loginForm';
+					buildLoginForm(loginForm);
+					buildChatWindow(authContainer);
+					buildMessageForm(authContainer);
+					
+					container.className = 'container';
+					authContainer.className = 'authContainer';
+					render();
+				},
+				
+				render = function () {
+					container.appendChild(loginForm);
+					container.appendChild(authContainer);
+					window.document.body.appendChild(container);
+				};
+		</script>
+	</head>
+	<body class="noAuth" onload="init()">
+	</body>
+</html>
