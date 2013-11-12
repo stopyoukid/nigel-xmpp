@@ -1,0 +1,23 @@
+{
+  "name": "nigel-xmpp",
+  "version": "0.0.1",
+  "description": "XMPP Client For Nigel",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stopyoukid/nigel-xmpp.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stopyoukid/nigel-xmpp/issues"
+  },
+  "homepage": "https://github.com/stopyoukid/nigel-xmpp",
+  "dependencies": {
+    "socket.io": "~0.9.16",
+    "socket.io-client": "~0.9.16"
+  }
+}

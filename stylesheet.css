@@ -1,0 +1,64 @@
+body {
+	background: #333;
+	margin: 15px 15px 15px 15px;
+}
+
+.container {
+	border: 2px solid gray;
+	background: #eee;
+	width: 800px;
+	height: 550px;
+}
+
+.loginForm {
+	padding: 10px 10px 10px 10px;
+	display: block;
+}
+
+.chatWindow {
+	background: white;
+	border: 1px solid black;
+	margin: 10px 10px 10px 10px !important;
+	padding: 10px 10px 10px 10px;
+	height: 350px;
+	overflow-y: auto;
+}
+
+.userName {
+	color: blue;
+	margin-right: 8px;
+}
+
+.guestName {
+	color: red;
+	margin-right: 8px;
+}
+
+.messageForm {
+	padding: 10px 10px 10px 10px;
+}
+
+.userMessage {
+	width: 715px;
+	height: 75px;
+}
+
+.userSend {
+	width: 57px;
+	height: 75px;
+	margin-left: 5px;
+}
+
+.chat {
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+.noAuth .authContainer * {
+	text-decoration: none;
+	opacity:0.4;
+}
+
+.noAuth .authContainer:hover * {
+	cursor: default;
+}
